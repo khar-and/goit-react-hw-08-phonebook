@@ -72,7 +72,7 @@
 
 // export const authReducer = authSlice.reducer;
 
-import { register, logIn, logOut, refreshUser } from './authThunk';
+import { register, logIn, logOut, refreshUser } from './operations';
 const { createSlice, isAnyOf } = require('@reduxjs/toolkit');
 
 const STATUS = {
