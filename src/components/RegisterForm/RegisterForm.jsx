@@ -1,119 +1,130 @@
-// import { useDispatch } from 'react-redux';
-// import { register } from 'redux/auth/operations';
-// import { Form, Label, Input, Button } from './RegisterForm.styles';
-
-// // Компонент RegisterForm відповідає за форму реєстрації нового користувача
-// export const RegisterForm = () => {
-//   const dispatch = useDispatch();
-
-//   const handleSubmit = event => {
-//     event.preventDefault();
-//     const form = event.currentTarget;
-
-//     // Викликаємо дію register з параметрами name, email та password, які отримуємо зі значень полів форми
-//     dispatch(
-//       register({
-//         name: form.elements.name.value,
-//         email: form.elements.email.value,
-//         password: form.elements.password.value,
-//       })
-//     );
-//     form.reset(); // Очищуємо значення полів форми після відправки
-//   };
-
-//   return (
-//     <Form onSubmit={handleSubmit} autoComplete="off">
-//       <Label>
-//         Username
-//         <Input
-//           type="text"
-//           name="name"
-//           placeholder="Введіть ім'я"
-//           pattern="^[^\d]+$"
-//           title="Ім'я має містити лише літери, апострофи, дефіси та відступи"
-//           required
-//         />
-//       </Label>
-//       <Label>
-//         Email
-//         <Input
-//           type="email"
-//           name="email"
-//           placeholder="Введіть адресу електронної пошти"
-//           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-//           title="Будь ласка, введіть дійсну адресу електронної пошти"
-//           required
-//         />
-//       </Label>
-//       <Label>
-//         Password
-//         <Input
-//           type="password"
-//           name="password"
-//           placeholder="Введіть пароль"
-//           pattern="^[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|:<>/?]+$"
-//           title="Пароль повинен містити тільки латинські літери (як великі, так і малі), цифри та інші символи"
-//           required
-//         />
-//       </Label>
-//       <Button type="submit">Register</Button>
-//     </Form>
-//   );
-// };
-
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { register } from 'redux/auth/authThunk';
+import {
+  avatarStyle,
+  boxBottomFStyle,
+  boxFormStyle,
+} from '../../pages/StylePages';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import {
+  Avatar,
+  Button,
+  Container,
+  Typography,
+  CssBaseline,
+  TextField,
+  Box,
+} from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
-import { Form } from './authForm.styles';
-import { register } from 'redux/auth/operations';
-
-export const RegisterForm = () => {
+const RegisterForm = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const handleSubmit = evt => {
-    evt.preventDefault();
-    const form = evt.currentTarget;
 
-    dispatch(
-      register({
-        name: form.elements.name.value,
-        email: form.elements.email.value,
-        password: form.elements.password.value,
-      })
-    );
-    form.reset();
+  const handleChangeInput = e => {
+    const { name, value } = e.currentTarget;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+
+      default:
+        break;
+    }
   };
-
+  const handleSubmitUser = e => {
+    e.preventDefault();
+    const newUser = { name, email, password };
+    console.log('newUser', newUser);
+    dispatch(register(newUser))
+      .unwrap()
+      .then(originalPromiseResult => {
+        toast.success(`${originalPromiseResult.newUser.name} welcome!`);
+      })
+      .catch(() => {
+        toast.failure("Sorry, something's wrong");
+      });
+    setName('');
+    setEmail('');
+    setPassword('');
+  };
   return (
-    <Form autoComplete="off" onSubmit={handleSubmit}>
-      <label>
-        Username
-        <input
-          type="text"
-          name="name"
-          required
-          placeholder="Anna Smith"
-          minLength={3}
-        />
-      </label>
-      <label>
-        Email
-        <input
-          type="email"
-          name="email"
-          required
-          placeholder="my-mail@gmail.com"
-        />
-      </label>
-      <label>
-        Password
-        <input
-          type="password"
-          name="password"
-          minLength={7}
-          required
-          placeholder="*******"
-        />
-      </label>
-      <button type="submit">Register</button>
-    </Form>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box sx={boxFormStyle}>
+        <Avatar sx={avatarStyle}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign up
+        </Typography>
+        <Box component="form" onSubmit={handleSubmitUser} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            helperText="The name must contain only letters, apostrophes, hyphens and indents."
+            autoComplete="name"
+            name="name"
+            value={name}
+            pattern="^[a-zA-Zа-яА-Я]+(([a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+            required
+            fullWidth
+            label="Name"
+            onChange={handleChangeInput}
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            helperText="Please enter a valid email address"
+            fullWidth
+            id="email"
+            label="Email"
+            type="email"
+            name="email"
+            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+            value={email}
+            autoComplete="email"
+            onChange={handleChangeInput}
+          />
+          <TextField
+            margin="normal"
+            required
+            helperText="The password must contain at least 7 characters"
+            fullWidth
+            type="password"
+            name="password"
+            value={password}
+            label="Password"
+            pattern="^[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|:<>/?]+$"
+            id="password"
+            autoComplete="new-password"
+            onChange={handleChangeInput}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign Up
+          </Button>
+          <Box sx={boxBottomFStyle}>
+            <NavLink to="/login">Already have an account? Sign in</NavLink>
+          </Box>
+        </Box>
+      </Box>
+    </Container>
   );
 };
+
+export default RegisterForm;

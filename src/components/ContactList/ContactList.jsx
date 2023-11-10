@@ -1,144 +1,88 @@
-// // import { useSelector, useDispatch } from 'react-redux';
-// // import { deleteContact } from '../../redux/operations';
-
-// // import { selectContacts, selectContactsFilter } from '../../redux/selectors';
-// // import { Button, Item, List } from './ContactList.styled';
-
-// // // компонент використовую список контактів з стору через useSelector
-// // export function ContactList() {
-// //   const contacts = useSelector(selectContacts);
-
-// //   const filterValue = useSelector(selectContactsFilter).toLowerCase();
-
-// //   // надсилання екшона видалення контакту за допомогою useDispatch
-// //   const dispatch = useDispatch();
-
-// //   const handleDelete = evt => {
-// //     dispatch(deleteContact(evt.currentTarget.id));
-
-// //     // ^ сповіщення має відображатись у featch??
-// //     alert(`This contact is delited from your phonebook!`);
-// //   };
-
-// //   const getVisibilityContacts = () => {
-// //     if (!filterValue || filterValue === '') {
-// //       return contacts;
-// //     }
-
-// //     return contacts.filter(contact =>
-// //       contact.name.toLowerCase().includes(filterValue)
-// //     );
-// //   };
-
-// //   const visibilityContacts = getVisibilityContacts();
-
-// //   return (
-// //     <List>
-// //       {visibilityContacts.map(contact => (
-// //         <Item key={contact.id}>
-// //           <p>
-// //             {contact.name}: <span>{contact.phone}</span>
-// //           </p>
-// //           <Button type="button" id={contact.id} onClick={handleDelete}>
-// //             Delete
-// //           </Button>
-// //         </Item>
-// //       ))}
-// //     </List>
-// //   );
-// // }
-
-// import React from 'react';
-// import { useSelector } from 'react-redux';
-// import { selectVisibleContacts } from 'redux/contacts/selectors';
-// import { useDispatch } from 'react-redux';
-// import { deleteContacts } from 'redux/contacts/operations';
-// import { List, Item, Button } from './ContactList.styled';
-// import { ReactComponent as DeleteIcon } from 'icons/delete.svg';
-
-// // Компонент ContactList відповідає за відображення списку контактів
-// export const ContactList = () => {
-//   const contacts = useSelector(selectVisibleContacts);
-//   const dispatch = useDispatch();
-
-//   return (
-//     <List>
-//       {contacts.map(contact => (
-//         <Item key={contact.id}>
-//           {contact.name + ' : ' + contact.number}
-//           {
-//             <Button
-//               type="button"
-//               name="delete"
-//               onClick={() => dispatch(deleteContacts(contact.id))}
-//             >
-//               <DeleteIcon fill="#000000" width="20" height="20" />
-//               delete
-//             </Button>
-//           }
-//         </Item>
-//       ))}
-//     </List>
-//   );
-// };
-
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/contacts/operations';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { selectContactsList } from 'redux/contacts/contactsSelectors';
+import { deleteContactsThunk, getContactsThunk } from 'redux/contacts/thunk';
+import { selectContactsFilter } from 'redux/filters/slice';
+import { SpinerDel } from 'components/Loader/Loader';
+import css from './ContactList.module.css';
 import {
-  selectContacts,
-  selectContactsFilter,
-} from '../../redux/contacts/selectors';
-import { IoPersonOutline, IoClose } from 'react-icons/io5';
-import {
-  ContactsList,
-  ContactItem,
-  ContactIcon,
-  ContactText,
-  ContactDelete,
-} from './ContactList.styles';
-import { getRandomHexColor } from '../../utils/getColorsFn';
+  Box,
+  List,
+  Typography,
+  Avatar,
+  ListItem,
+  IconButton,
+  ListItemButton,
+  ListItemText,
+} from '@mui/material';
+import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { avatarStyle } from 'pages/StylePages';
 
-// компонент використовую список контактів з стору через useSelector
-export function ContactList() {
-  const contacts = useSelector(selectContacts);
-
-  const filterValue = useSelector(selectContactsFilter).toLowerCase();
-
-  // надсилання екшона видалення контакту за допомогою useDispatch
+export const ContactList = () => {
   const dispatch = useDispatch();
+  const [load, setLoad] = useState(true);
 
-  const handleDelete = evt => {
-    dispatch(deleteContact(evt.currentTarget.id));
-  };
+  useEffect(() => {
+    setLoad(false);
+  }, []);
 
-  const getVisibilityContacts = () => {
-    if (!filterValue || filterValue === '') {
-      return contacts;
-    }
+  useEffect(() => {
+    dispatch(getContactsThunk());
+  }, [dispatch]);
 
-    return contacts.filter(contact =>
-      contact.name.toLowerCase().includes(filterValue)
-    );
-  };
+  const contacts = useSelector(selectContactsList);
+  const filter = useSelector(selectContactsFilter);
 
-  const visibilityContacts = getVisibilityContacts();
-
-  return (
-    <ContactsList>
-      {visibilityContacts.map(contact => (
-        <ContactItem key={contact.id} rgb={getRandomHexColor()}>
-          <ContactIcon>
-            <IoPersonOutline />
-          </ContactIcon>
-          <ContactText rgb={getRandomHexColor()}>
-            {contact.name}: <span>{contact.number}</span>
-          </ContactText>
-          <ContactDelete type="button" id={contact.id} onClick={handleDelete}>
-            <IoClose />
-            {/* Delete */}
-          </ContactDelete>
-        </ContactItem>
-      ))}
-    </ContactsList>
+  const visibleContacts = contacts.filter(({ name }) =>
+    name?.toLowerCase().includes(filter)
   );
-}
+
+  const deleteContact = contactId => {
+    dispatch(deleteContactsThunk(contactId))
+      .unwrap()
+      .then(originalPromiseResult => {
+        toast.success(
+          `${originalPromiseResult.name} successfully deleted from contacts`
+        );
+      })
+      .catch(() => {
+        toast.failure("Sorry, something's wrong");
+      });
+  };
+  return (
+    <Box className={css.boxListStyle}>
+      <Avatar sx={avatarStyle}>
+        <ImportContactsIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Your Contacts
+      </Typography>
+      <List sx={{ width: 396 }}>
+        {visibleContacts.map(({ id, name, number }) => {
+          return (
+            <ListItem
+              key={id}
+              className={css.listItemStyle}
+              secondaryAction={
+                <IconButton
+                  onClick={() => deleteContact(id)}
+                  aria-label="delete"
+                >
+                  {load ? <SpinerDel /> : <DeleteIcon />}
+                </IconButton>
+              }
+            >
+              <ListItemButton>
+                <ListItemText>
+                  {name}: {number}
+                </ListItemText>
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
+    </Box>
+  );
+};

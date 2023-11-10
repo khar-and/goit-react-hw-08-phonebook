@@ -1,226 +1,122 @@
-// // import { useDispatch, useSelector } from 'react-redux';
-// // import { addContact } from '../../redux/operations';
-// // import { selectContacts } from '../../redux/selectors';
-
-// // import { Form, Button, Input, Label } from './ContactForm.styled';
-
-// // const ContactForm = () => {
-// //   const dispatch = useDispatch();
-// //   const contacts = useSelector(selectContacts);
-
-// //   function handlerSubmit(evt) {
-// //     evt.preventDefault();
-// //     const form = evt.target;
-// //     const name = form.name.value;
-// //     const phone = form.number.value;
-
-// //     if (
-// //       contacts.find(
-// //         contact => contact.name.toLowerCase() === name.toLowerCase()
-// //       )
-// //     ) {
-// //       return alert(`${name} is alredy in contacts.`);
-// //     }
-
-// //     dispatch(addContact({ name, phone }));
-
-// //     alert(`${name} is added to the contact list!`);
-
-// //     form.reset();
-// //   }
-
-// //   return (
-// //     <Form onSubmit={handlerSubmit}>
-// //       <Label>
-// //         Name{' '}
-// //         <Input
-// //           type="text"
-// //           name="name"
-// //           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-// //           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-// //           required
-// //         />
-// //       </Label>
-// //       <Label>
-// //         Number{' '}
-// //         <Input
-// //           type="tel"
-// //           name="number"
-// //           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-// //           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-// //           required
-// //         />
-// //       </Label>
-
-// //       <Button type="submit">Add contact</Button>
-// //     </Form>
-// //   );
-// // };
-
-// // export default ContactForm;
-
-// import { useState } from 'react';
-// import { nanoid } from 'nanoid';
-// import { useSelector, useDispatch } from 'react-redux';
-// import { Filter } from 'components/Filter/Filter';
-// import { selectContacts } from 'redux/contacts/selectors';
-// import { addContacts } from 'redux/contacts/operations';
-// import { Form, Label, Input, Button } from './ContactForm.styled';
-// import { ReactComponent as AddIcon } from 'icons/add.svg';
-
-// //Генерація унікальних ідентифікаторів для полів форми.
-// const nameInputId = nanoid();
-// const numberInputId = nanoid();
-
-// // Компонент ContactForm відповідає за форму додавання нового контакту
-// export const ContactForm = () => {
-//   const [name, setName] = useState('');
-//   const [number, setNumber] = useState('');
-//   const contacts = useSelector(selectContacts);
-//   const dispatch = useDispatch();
-
-//   // Обробка відправлення форми.
-//   const handleSubmit = event => {
-//     event.preventDefault();
-
-//     // Перевіряємо, чи контакт з таким іменем вже існує в списку контактів
-//     const isInContacts = contacts.some(
-//       contact => contact.name.toLowerCase() === name.toLowerCase()
-//     );
-
-//     // Перевіряє, чи існує контакт із таким самим ім'ям у списку контактів. Якщо контакт вже існує, виводиться попередження.
-//     if (isInContacts) {
-//       alert(`${name} вже в контактах☝️`);
-
-//       return;
-//     }
-
-//     // Відправляємо дію для додавання нового контакту до Redux store
-//     dispatch(addContacts({ name, number }));
-
-//     setName('');
-//     setNumber('');
-//   };
-
-//   // Обробка зміни значень полів форми.
-//   const handleChange = event => {
-//     const { name, value } = event.currentTarget;
-//     switch (name) {
-//       case 'name':
-//         setName(value);
-//         break;
-//       case 'number':
-//         setNumber(value);
-//         break;
-//       default:
-//         return;
-//     }
-//   };
-
-//   return (
-//     <>
-//       <Form onSubmit={handleSubmit}>
-//         <Label htmlFor={nameInputId}>
-//           Name
-//           <Input
-//             type="text"
-//             name="name"
-//             placeholder="Введіть ім'я"
-//             value={name}
-//             onChange={handleChange}
-//             pattern="^[^\d]+$"
-//             title="Ім'я має містити лише літери, апострофи, дефіси та відступи"
-//             required
-//           />
-//         </Label>
-
-//         <Label htmlFor={numberInputId}>
-//           Number
-//           <Input
-//             type="tel"
-//             name="number"
-//             placeholder="Введіть номер телефону"
-//             value={number}
-//             onChange={handleChange}
-//             pattern="\+\d{12}"
-//             minlength="13"
-//             maxlength="13"
-//             title="Номер телефону має починатися з +, а потім 12 цифр"
-//             required
-//           />
-//         </Label>
-
-//         <Button type="submit">
-//           <AddIcon fill="#f08080" width="25" height="25" />
-//           Add contact{' '}
-//         </Button>
-//       </Form>
-//       <Filter />
-//     </>
-//   );
-// };
-
+import { nanoid } from '@reduxjs/toolkit';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addContact } from '../../redux/contacts/operations';
 import { toast } from 'react-toastify';
-import { selectContacts } from '../../redux/contacts/selectors';
-import { IoPersonAdd } from 'react-icons/io5';
-import { Form, FormList, FormListItem, FormButton } from './ContactForm.styles';
+import { selectContactsList } from 'redux/contacts/contactsSelectors';
+import { avatarStyle } from 'pages/StylePages';
+import { createContactsThunk } from 'redux/contacts/thunk';
 
-const ContactForm = () => {
+import { Avatar, Button, TextField, Box, Typography } from '@mui/material';
+import ContactsIcon from '@mui/icons-material/Contacts';
+import { LoadAdd } from 'components/Loader/Loader';
+export const ContactForm = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const [add, setAdd] = useState(false);
   const dispatch = useDispatch();
-  const contacts = useSelector(selectContacts);
+  const contacts = useSelector(selectContactsList);
+  useEffect(() => {
+    setAdd(false);
+  }, [contacts]);
 
-  function handlerSubmit(evt) {
-    evt.preventDefault();
-    const form = evt.target;
-    const name = form.name.value;
-    const number = form.number.value;
+  const handleChange = ({ target: { value, name } }) => {
+    if (name === 'name') setName(value);
+    else setNumber(value);
+  };
 
-    if (
-      contacts.find(
-        contact => contact.name.toLowerCase() === name.toLowerCase()
-      )
-    ) {
-      return toast.warn(`${name} is alredy in contacts.`);
+  const onSubmitAddContact = event => {
+    event.preventDefault();
+    const data = { name, number };
+    const newObj = { ...data, id: nanoid() };
+
+    if (isNameNew(contacts, newObj) !== undefined) {
+      toast.warning(`${newObj.name} is already in contacts`);
+      return;
     }
 
-    dispatch(addContact({ name, number }));
+    dispatch(createContactsThunk(newObj))
+      .unwrap()
+      .then(originalPromiseResult => {
+        toast.success(
+          `${originalPromiseResult.name} successfully added to contacts`
+        );
+      })
+      .catch(() => {
+        toast.failure("Sorry, something's wrong");
+      });
+    reset();
+  };
 
-    form.reset();
-  }
+  const isNameNew = (contacts, newObj) => {
+    return contacts.find(
+      ({ name }) => name.toLowerCase() === newObj.name.toLowerCase()
+    );
+  };
+
+  const reset = () => {
+    setName('');
+    setNumber('');
+  };
 
   return (
-    <Form onSubmit={handlerSubmit}>
-      <FormList>
-        <FormListItem>
-          <p>Name</p>
-          <input
-            type="text"
-            name="name"
-            pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-            title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-            required
-          />
-        </FormListItem>
-        <FormListItem>
-          <p>Contact</p>
-          <input
-            type="tel"
-            name="number"
-            pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-            title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-            required
-          />
-        </FormListItem>
-      </FormList>
-
-      <FormButton type="submit">
-        <IoPersonAdd />
-        Add contact
-      </FormButton>
-    </Form>
+    <>
+      <Avatar sx={avatarStyle}>
+        <ContactsIcon />
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        Add Contact
+      </Typography>
+      <Box component="form" onSubmit={onSubmitAddContact} sx={{ mt: 1 }}>
+        <TextField
+          sx={{ backgroundColor: 'rgba(255, 255, 234, 0.822)' }}
+          inputProps={{
+            inputMode: 'text',
+            pattern: '^[a-zA-Zа-яА-Я]+(([a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$',
+          }}
+          margin="normal"
+          fullWidth
+          label="Name"
+          type="text"
+          name="name"
+          value={name}
+          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+          required
+          placeholder="Enter name ..."
+          onChange={handleChange}
+        />
+        <TextField
+          sx={{ backgroundColor: 'rgba(255, 255, 234, 0.822)' }}
+          inputProps={{
+            inputMode: 'tel',
+            pattern:
+              '+?d{1,4}?[-.s]?(?d{1,3}?)?[-.s]?d{1,4}[-.s]?d{1,4}[-.s]?d{1,9}',
+          }}
+          margin="normal"
+          fullWidth
+          label="Phone number"
+          type="tel"
+          name="number"
+          value={number}
+          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+          required
+          placeholder="Enter number ..."
+          onChange={handleChange}
+        />
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          sx={{
+            mt: 3,
+            mb: 2,
+            display: 'flex',
+            gap: 3,
+          }}
+        >
+          {add && <LoadAdd />}
+          <p>Add contact</p>
+        </Button>
+      </Box>
+    </>
   );
 };
-
-export default ContactForm;

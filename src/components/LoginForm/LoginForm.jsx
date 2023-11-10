@@ -1,91 +1,101 @@
-// import { useDispatch } from 'react-redux';
-// import { logIn } from 'redux/auth/operations';
-// import { Form, Label, Input, Button } from './LoginForm.styled';
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Box,
+  Container,
+  Typography,
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { avatarStyle, boxFormStyle } from '../../pages/StylePages';
+import { toast } from 'react-toastify';
+import { logIn } from 'redux/auth/authThunk';
 
-// // Компонент LoginForm відповідає за форму авторизації користувача
-// export const LoginForm = () => {
-//   const dispatch = useDispatch();
-
-//   const handleSubmit = event => {
-//     event.preventDefault();
-//     const form = event.currentTarget;
-
-//     // Викликаємо дію logIn з параметрами email та password, які отримуємо зі значень полів форми
-//     dispatch(
-//       logIn({
-//         email: form.elements.email.value,
-//         password: form.elements.password.value,
-//       })
-//     );
-//     form.reset(); // Очищуємо значення полів форми після відправки
-//   };
-
-//   return (
-//     <Form onSubmit={handleSubmit} autoComplete="off">
-//       <Label>
-//         Email
-//         <Input
-//           type="email"
-//           name="email"
-//           placeholder="Введіть адресу електронної пошти"
-//           pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-//           title="Будь ласка, введіть дійсну адресу електронної пошти"
-//           required
-//         />
-//       </Label>
-//       <Label>
-//         Password
-//         <Input
-//           type="password"
-//           name="password"
-//           placeholder="Введіть пароль"
-//           pattern="^[a-zA-Z0-9!@#$%^&*()-_=+`~[\]{}|:<>/?]+$"
-//           title="Пароль повинен містити тільки латинські літери (як великі, так і малі), цифри та інші символи"
-//           required
-//         />
-//       </Label>
-//       <Button type="submit">Log In</Button>
-//     </Form>
-//   );
-// };
-
-import { useDispatch, useSelector } from 'react-redux';
-// import { logIn } from 'redux/auth/operations';
-import { Form } from './authForm.styles';
-import { logIn } from 'redux/auth/operations';
-
-export const LoginForm = () => {
+const { useState } = require('react');
+const { useDispatch } = require('react-redux');
+const LoginForm = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const errorLogin = useSelector(state => state.error);
 
-  const handleSubmit = evt => {
-    evt.preventDefault();
-    const form = evt.currentTarget;
+  const handleChangeInput = e => {
+    const { name, value } = e.currentTarget;
+    switch (name) {
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
 
-    dispatch(
-      logIn({
-        email: form.elements.email.value,
-        password: form.elements.password.value,
+      default:
+        break;
+    }
+  };
+
+  const hendleSubmitLogin = event => {
+    event.preventDefault();
+    const loginUser = { email, password };
+    console.log('logInUser', loginUser);
+    dispatch(logIn(loginUser))
+      .unwrap()
+      .then(originalPromiseResult => {
+        toast.success(`${originalPromiseResult.loginUser.name} welcome back!`);
       })
-    );
+      .catch(() => {
+        toast.failure('Incorrect login or password');
+      });
 
-    form.reset();
+    setEmail('');
+    setPassword('');
   };
 
   return (
-    <>
-      {errorLogin && <div>Error login</div>}
-      <Form autoComplete="off" onSubmit={handleSubmit}>
-        <label>
-          Email
-          <input type="email" name="email" required />
-        </label>
-        <label>
-          Password
-          <input type="password" name="password" required />
-        </label>
-        <button type="submit">Log In</button>
-      </Form>
-    </>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box sx={boxFormStyle}>
+        <Avatar sx={avatarStyle}>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Sign in
+        </Typography>
+        <Box component="form" onSubmit={hendleSubmitLogin} sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            value={email}
+            type="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            onChange={handleChangeInput}
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            label="Password"
+            type="password"
+            name="password"
+            value={password}
+            autoComplete="current-password"
+            onChange={handleChangeInput}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+        </Box>
+      </Box>
+    </Container>
   );
 };
+export default LoginForm;

@@ -1,43 +1,27 @@
-// import { useDispatch } from 'react-redux';
-// import { logOut } from 'redux/auth/operations';
-// import { selectUser } from 'redux/auth/selectors';
-// import { useSelector } from 'react-redux';
-// import { Wrapper, Text, Button } from './UserMenu.styled';
-
-// // Компонент UserMenu відповідає за меню користувача, якщо користувач авторизований
-// export const UserMenu = () => {
-//   const user = useSelector(selectUser);
-//   const dispatch = useDispatch();
-
-//   return (
-//     <Wrapper>
-//       <Text>Welcome to Phonebook {user.name} </Text>{' '}
-//       {/* Відображення привітання з ім'ям користувача */}
-//       <Button type="button" onClick={() => dispatch(logOut())}>
-//         Logout
-//       </Button>{' '}
-//       {/* Кнопка для виходу з облікового запису користувача */}
-//     </Wrapper>
-//   );
-// };
-
-import { useSelector, useDispatch } from 'react-redux';
-import { logOut } from '../../redux/auth/operations';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../redux/auth/selectors';
-import { UserTitle } from './UserMenu.styles';
+import { logOut } from '../../redux/auth/operations';
+import { Avatar, Button, Toolbar } from '@mui/material';
 
-const UserMenu = () => {
+import avatar from './avatar.jpg';
+
+export const UserMenu = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
   return (
-    <UserTitle>
-      <p>Welcome, {user.name}</p>
-      <button type="button" onClick={() => dispatch(logOut())}>
-        Logout
-      </button>
-    </UserTitle>
+    <Toolbar sx={{ display: 'flex', columnGap: 2, fontSize: 18 }}>
+      <Avatar alt={user.name} src={avatar} sx={{ width: 36, height: 36 }} />
+      Welcome, {user.name}!
+      <Button
+        variant="text"
+        color="inherit"
+        type="button"
+        sx={{ backgroundColor: 'skyblue' }}
+        onClick={() => dispatch(logOut())}
+      >
+        Log Out
+      </Button>
+    </Toolbar>
   );
 };
-
-export default UserMenu;
