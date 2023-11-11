@@ -5,14 +5,19 @@
   padding: 10px;
   gap: 20px;
   flex-wrap: wrap;
-  border: 2px solid #fda117;
+  border: 2px solid blue;
+  border-radius: 8px;
+  margin-bottom: 50px;
 }
+
 .input {
   height: 25px;
   padding: 4px;
   width: 300px;
   border-radius: 5px;
+  border: 2px solid blue;
 }
+
 .label {
   width: 400px;
   justify-content: space-between;
@@ -20,10 +25,13 @@
   display: flex;
   padding: 4px 5px;
 }
+
 .button {
   height: 30px;
   width: 100px;
   padding: 4px;
   font-weight: 500px;
-  background-color: #fda117;
+  background-color: rgb(123, 240, 240);
+  border-radius: 8px;
+
 }

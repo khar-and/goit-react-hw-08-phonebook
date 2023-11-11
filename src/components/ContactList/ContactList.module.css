@@ -1,21 +1,27 @@
 .list {
+  margin-top: 30px;
   padding: 0px;
   margin-bottom: 20px;
-  border: 1px solid #fda117;
   width: 422px;
 }
+
 .item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 400px;
   padding: 10px;
-  border: 1px solid #fda117;
+  border: 2px solid blue;
+  border-radius: 8px;
+  margin-bottom: 5px;
 }
+
+
 .button {
   height: 30px;
   width: 100px;
   padding: 4px;
   font-weight: 500px;
-  background-color: #fda117;
+  background-color: rgb(123, 240, 240);
+  border-radius: 8px;
 }

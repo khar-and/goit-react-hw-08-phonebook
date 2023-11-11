@@ -8,7 +8,7 @@ export const Error = () => {
 
   return (
     <div className={css.wrapperError}>
-      <p> Нам шкода, {error}</p>
+      <p> Sorry, {error}</p>
     </div>
   );
 };

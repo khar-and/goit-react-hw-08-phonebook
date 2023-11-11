@@ -11,14 +11,14 @@ export default function HomePage() {
       {isLoggedIn ? (
         <>
           <h1 className={css.title}>
-            Hi, {user.name}! <br />
-            Welcome to your phonebook.
+            {user.name}! <br />
+            Welcome to phonebook.
           </h1>
         </>
       ) : (
         <>
-          <h1 className={css.title}>Hello! I'm your phonebook.</h1>
-          <h2 className={css.title}>
+          <h1 className={css.title}> Phonebook (v.1.0)</h1>
+          <h2 className={css.titletext}>
             Please log in to your account or register.
           </h2>
 

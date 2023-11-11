@@ -54,7 +54,7 @@ const LoginForm = () => {
             pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/."
             title="Email may contain letters, numbers, an apostrophe, and must be followed by '@' domain name '.' domain suffix. For example Taras@ukr.ua, adrian@gmail.com, JacobM3rcer@hotmail.com"
             required
-            placeholder="Enter email ..."
+            placeholder="Enter your email ..."
             onChange={handleChangeInput}
           />
         </label>
@@ -68,7 +68,7 @@ const LoginForm = () => {
             pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
             title="Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters. For example TgeV23592, 3Greioct."
             required
-            placeholder="Enter password ..."
+            placeholder="Enter your password ..."
             onChange={handleChangeInput}
           />
         </label>

@@ -56,7 +56,7 @@ const RegisterForm = () => {
             pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
             title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
             required
-            placeholder="Enter name ..."
+            placeholder="Enter your name ..."
             onChange={handleChangeInput}
           />
         </label>
@@ -70,7 +70,7 @@ const RegisterForm = () => {
             pattern="/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/."
             title="Email may contain letters, numbers, an apostrophe, and must be followed by '@' domain name '.' domain suffix. For example Taras@ukr.ua, adrian@gmail.com, JacobM3rcer@hotmail.com"
             required
-            placeholder="Enter email ..."
+            placeholder="Enter your email ..."
             onChange={handleChangeInput}
           />
         </label>
@@ -84,7 +84,7 @@ const RegisterForm = () => {
             pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
             title="Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters. For example TgeV23592, 3Greioct."
             required
-            placeholder="Enter password ..."
+            placeholder="Enter your password ..."
             onChange={handleChangeInput}
           />
         </label>
