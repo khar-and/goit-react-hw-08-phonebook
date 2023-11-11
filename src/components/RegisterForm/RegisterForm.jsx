@@ -37,7 +37,8 @@ const RegisterForm = () => {
         toast.success(`${originalPromiseResult.newUser.name} welcome!`);
       })
       .catch(() => {
-        toast.failure("Sorry, something's wrong");
+        console.log("Sorry, something's wrong");
+        // toast.failure("Sorry, something's wrong");
       });
     setName('');
     setEmail('');
