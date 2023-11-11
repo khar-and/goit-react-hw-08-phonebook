@@ -1,12 +1,21 @@
-.boxListStyle {
-  width: '100%';
-  margin-top: 1px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.list {
+  padding: 0px;
+  margin-bottom: 20px;
+  border: 1px solid #fda117;
+  width: 422px;
 }
-.listItemStyle {
-  background-color: rgba(255, 255, 234, 0.822);
-  border-radius: 2px;
-  margin-bottom: 1px;
+.item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 400px;
+  padding: 10px;
+  border: 1px solid #fda117;
+}
+.button {
+  height: 30px;
+  width: 100px;
+  padding: 4px;
+  font-weight: 500px;
+  background-color: #fda117;
 }

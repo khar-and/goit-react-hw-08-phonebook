@@ -1,7 +1,7 @@
 .NavLink {
   color: #212121;
 }
-.toolbarStyle {
+.navigation {
   display: flex;
   column-gap: 3px;
 }

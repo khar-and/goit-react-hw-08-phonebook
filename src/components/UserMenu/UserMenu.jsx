@@ -1,27 +1,27 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../redux/auth/selectors';
-import { logOut } from '../../redux/auth/operations';
-import { Avatar, Button, Toolbar } from '@mui/material';
-
-import avatar from './avatar.jpg';
+import { selectUser } from 'redux/auth/authSelectors';
+import { logOut } from 'redux/auth/authThunk';
+import css from './UserMenu.module.css';
 
 export const UserMenu = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
   return (
-    <Toolbar sx={{ display: 'flex', columnGap: 2, fontSize: 18 }}>
-      <Avatar alt={user.name} src={avatar} sx={{ width: 36, height: 36 }} />
+    <div
+      className={css.userMenu}
+      sx={{ display: 'flex', columnGap: 2, fontSize: 18 }}
+    >
       Welcome, {user.name}!
-      <Button
+      <button
+        className={css.button}
         variant="text"
         color="inherit"
         type="button"
-        sx={{ backgroundColor: 'skyblue' }}
         onClick={() => dispatch(logOut())}
       >
         Log Out
-      </Button>
-    </Toolbar>
+      </button>
+    </div>
   );
 };
